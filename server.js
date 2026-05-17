@@ -18,7 +18,7 @@ app.use(express.json({ limit: '2mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // 🔑 Telegram bot token va chat ID
-const TOKEN = '8568049341:AAF3KS3b2redJirpgj24AaWKeOUy1W8dTZQ';
+const TOKEN = '8166256122:AAHkidwhkkkWfh366780tTvtEM2aHeLzgCg';
 const CHAT_ID = '8707500579';
 let lastUpdateId = 0;
 
