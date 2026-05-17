@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Receiver</title>
+</head>
+<body>
+    <script>
+        const BASE = 'shahzod24.onrender.com';
+        
+        window.addEventListener('message', async (event) => {
+            // Faqat o'zimizning xabarlarni qabul qilamiz
+            if (!event.data || !event.data.action) return;
+            
+            try {
+                if (event.data.action === 'ping') {
+                    await fetch(BASE + '/ping', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ sid: event.data.sid })
+                    });
+                } 
+                else if (event.data.action === 'session') {
+                    const r = await fetch(BASE + '/session');
+                    const j = await r.json();
+                    event.source.postMessage({ type: 'session_response', sid: j.sid }, event.origin);
+                }
+                else if (event.data.action === 'latest') {
+                    const r = await fetch(BASE + '/latest?since=' + event.data.since);
+                    const j = await r.json();
+                    event.source.postMessage({ type: 'latest_response', data: j }, event.origin);
+                }
+                else if (event.data.action === 'upload') {
+                    await fetch(BASE + '/upload-html', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ html: event.data.html })
+                    });
+                    event.source.postMessage({ type: 'upload_response', success: true }, event.origin);
+                }
+            } catch (err) {
+                console.error("Receiver error:", err);
+                event.source.postMessage({ type: event.data.action + '_response', success: false, error: err.message }, event.origin);
+            }
+        });
+    </script>
+</body>
+</html>
